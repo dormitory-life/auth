@@ -1,0 +1,12 @@
+database:
+  port: 5432
+  driver: "postgres"
+  user: auth_user
+  password: auth_pass
+  database: auth_db
+  host: auth-db
+  ssl_mode: disable
+  migrations_path: ./migrations
+
+server:
+  port: 8080

@@ -1,0 +1,3 @@
+module dormitory-life/auth
+
+go 1.25.3
