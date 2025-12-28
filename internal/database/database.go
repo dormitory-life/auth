@@ -1,4 +1,4 @@
-package postgres
+package database
 
 import (
 	"database/sql"
@@ -8,12 +8,22 @@ import (
 	"github.com/dormitory-life/utils/migrator"
 )
 
-type PostgresDb struct {
+type database struct {
 	db *sql.DB
 }
 
-func New(cfg config.Config) (*PostgresDb, error) {
-	connStr := cfg.Db.GetConnectionString()
+type Repository interface {
+	//funcs
+}
+
+func New(db *sql.DB) Repository {
+	return &database{
+		db: db,
+	}
+}
+
+func InitDb(cfg config.DataBaseConfig) (*sql.DB, error) {
+	connStr := cfg.GetConnectionString()
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -25,14 +35,12 @@ func New(cfg config.Config) (*PostgresDb, error) {
 		return nil, err
 	}
 
-	if err := migrator.MigrateDB(connStr, cfg.Db.MigrationsPath); err != nil {
+	if err := migrator.MigrateDB(connStr, cfg.MigrationsPath); err != nil {
 		log.Fatal("Migration failed:", err)
 	}
 
 	log.Println("Migrations completed successfully!")
 	log.Println("Auth service is ready")
 
-	return &PostgresDb{
-		db: db,
-	}, nil
+	return db, nil
 }

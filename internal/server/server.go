@@ -4,26 +4,33 @@ import (
 	"fmt"
 	"net/http"
 
-	config "github.com/dormitory-life/auth/internal/config"
-	"github.com/dormitory-life/auth/internal/services/auth"
+	"github.com/dormitory-life/auth/internal/config"
+	"github.com/dormitory-life/auth/internal/service"
 )
 
-type Server struct {
-	server http.Server
-	auth   *auth.AuthSvc
+type ServerConfig struct {
+	Config  config.ServerConfig
+	Service service.Service
 }
 
-func New(cfg config.Config, authSvc *auth.AuthSvc) *Server {
+type Server struct {
+	server  http.Server
+	service service.Service
+}
+
+func New(cfg ServerConfig) *Server {
 	s := new(Server)
-	s.server.Addr = fmt.Sprintf(":%d", cfg.Server.Port)
+	s.server.Addr = fmt.Sprintf("%d", cfg.Config.Port)
 	s.server.Handler = s.setupRouter()
-	s.auth = authSvc
+	s.service = cfg.Service
+
 	return s
 }
 
 func (s *Server) setupRouter() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /ping", s.pingHandler)
+
 	return mux
 }
 
