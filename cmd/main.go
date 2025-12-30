@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/dormitory-life/auth/internal/config"
-	"github.com/dormitory-life/auth/internal/database/postgres"
-	"github.com/dormitory-life/auth/internal/repository"
+	"github.com/dormitory-life/auth/internal/database"
+	"github.com/dormitory-life/auth/internal/logger"
 	"github.com/dormitory-life/auth/internal/server"
-	"github.com/dormitory-life/auth/internal/service"
+	auth "github.com/dormitory-life/auth/internal/service"
 )
 
 func main() {
@@ -17,19 +18,27 @@ func main() {
 		panic(err)
 	}
 
-	// 1. Подключаемся к БД
-	db, err := postgres.New(*cfg)
+	log.Println("CONFIG: ", cfg)
+
+	logger, err := logger.New(cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	// 2. Создаем репозиторий
-	userRepo := repository.NewUserRepository(db.DB)
+	db, err := database.InitDb(cfg.Db)
+	if err != nil {
+		panic(err)
+	}
 
-	// 3. Создаем сервис
-	authService := services.NewAuthService(userRepo, "your-jwt-secret")
+	repository := database.New(db)
 
-	// 4. Запускаем сервер
-	s := server.New(*cfg, authService)
+	authService := auth.New(repository)
+
+	s := server.New(server.ServerConfig{
+		Config:      cfg.Server,
+		AuthService: authService,
+		Logger:      logger,
+	})
+	
 	panic(s.Start())
 }

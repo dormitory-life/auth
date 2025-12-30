@@ -10,6 +10,7 @@ import (
 const dbConnectionStringTemplate = "%s://%s:%s@%s:%d/%s?sslmode=%s"
 
 type Config struct {
+	Env    string         `yaml:"env"`
 	Db     DataBaseConfig `yaml:"database"`
 	Server ServerConfig   `yaml:"server"`
 }

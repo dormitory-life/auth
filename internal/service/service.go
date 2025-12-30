@@ -1,5 +1,91 @@
-package service
+package auth
 
-type Service interface {
-	AuthService
+import (
+	"context"
+	"errors"
+	"fmt"
+
+	"github.com/dormitory-life/auth/internal/database"
+	dberrors "github.com/dormitory-life/auth/internal/database/errors"
+	dbtypes "github.com/dormitory-life/auth/internal/database/types"
+	rmodel "github.com/dormitory-life/auth/internal/server/request_models"
+)
+
+type AuthService struct {
+	repository database.Repository
+}
+
+type AuthServiceClient interface {
+	Register(ctx context.Context, request *rmodel.RegisterRequest) (*rmodel.RegisterResponse, error)
+	Login(ctx context.Context, request *rmodel.LoginRequest) (*rmodel.LoginResponse, error)
+}
+
+func New(repository database.Repository) AuthServiceClient {
+	return &AuthService{
+		repository: repository,
+	}
+}
+
+func (s *AuthService) Register(
+	ctx context.Context,
+	request *rmodel.RegisterRequest,
+) (*rmodel.RegisterResponse, error) {
+	if request == nil {
+		return nil, ErrBadRequest
+	}
+
+	resp, err := s.repository.Register(ctx, &dbtypes.RegisterRequest{
+		Email:       request.Email,
+		Password:    request.Password,
+		DormitoryId: request.DormitoryId,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: error register user: %v", s.handleDBError(err), err)
+	}
+
+	result := new(rmodel.RegisterResponse).From(resp)
+
+	return result, nil
+}
+
+func (s *AuthService) Login(
+	ctx context.Context,
+	request *rmodel.LoginRequest,
+) (*rmodel.LoginResponse, error) {
+	if request == nil {
+		return nil, ErrBadRequest
+	}
+
+	resp, err := s.repository.GetUserByEmail(ctx, &dbtypes.GetUserByEmailRequest{
+		Email: request.Email,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: error getting user while login: %v", s.handleDBError(err), err)
+	}
+
+	if request.Password != resp.Password {
+		return nil, fmt.Errorf("%w: incorrect password", ErrUnauthorized)
+	}
+
+	result := &rmodel.LoginResponse{
+		UserId:      resp.UserId,
+		DormitoryId: resp.DormitoryId,
+	}
+
+	return result, nil
+}
+
+func (s *AuthService) handleDBError(err error) error {
+	switch {
+	case errors.Is(err, dberrors.ErrBadRequest):
+		return ErrBadRequest
+	case errors.Is(err, dberrors.ErrNotFound):
+		return ErrNotFound
+	case errors.Is(err, dberrors.ErrInternal):
+		return ErrInternal
+	case errors.Is(err, dberrors.ErrConflict):
+		return ErrConflict
+	default:
+		return ErrInternal
+	}
 }
