@@ -12,8 +12,10 @@ type (
 	}
 
 	RegisterResponse struct {
-		UserId      string `json:"user_id"`
-		DormitoryId int    `json:"dormitory_id"`
+		UserId       string `json:"user_id"`
+		DormitoryId  int    `json:"dormitory_id"`
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
 	}
 )
 
@@ -24,8 +26,10 @@ type (
 	}
 
 	LoginResponse struct {
-		UserId      string `json:"user_id"`
-		DormitoryId int    `json:"dormitory_id"`
+		UserId       string `json:"user_id"`
+		DormitoryId  int    `json:"dormitory_id"`
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
 	}
 )
 

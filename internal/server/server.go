@@ -36,6 +36,7 @@ func (s *Server) setupRouter() *http.ServeMux {
 	mux.HandleFunc("GET /auth/ping", s.pingHandler)
 	mux.HandleFunc("POST /auth/register", s.registerHandler)
 	mux.HandleFunc("POST /auth/login", s.loginHandler)
+	mux.HandleFunc("POST /auth/refresh", s.refreshHandler)
 
 	return mux
 }

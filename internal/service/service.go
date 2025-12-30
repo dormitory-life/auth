@@ -9,20 +9,29 @@ import (
 	dberrors "github.com/dormitory-life/auth/internal/database/errors"
 	dbtypes "github.com/dormitory-life/auth/internal/database/types"
 	rmodel "github.com/dormitory-life/auth/internal/server/request_models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
+type AuthServiceConfig struct {
+	Repository database.Repository
+	JWTSecret  string
+}
 type AuthService struct {
 	repository database.Repository
+	jwtSecret  string
 }
 
 type AuthServiceClient interface {
 	Register(ctx context.Context, request *rmodel.RegisterRequest) (*rmodel.RegisterResponse, error)
 	Login(ctx context.Context, request *rmodel.LoginRequest) (*rmodel.LoginResponse, error)
+	RefreshTokens(ctx context.Context, request *rmodel.RefreshTokensRequest) (*rmodel.RefreshTokensResponse, error)
 }
 
-func New(repository database.Repository) AuthServiceClient {
+func New(cfg AuthServiceConfig) AuthServiceClient {
 	return &AuthService{
-		repository: repository,
+		repository: cfg.Repository,
+		jwtSecret:  cfg.JWTSecret,
 	}
 }
 
@@ -34,9 +43,11 @@ func (s *AuthService) Register(
 		return nil, ErrBadRequest
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+
 	resp, err := s.repository.Register(ctx, &dbtypes.RegisterRequest{
 		Email:       request.Email,
-		Password:    request.Password,
+		Password:    string(hashedPassword),
 		DormitoryId: request.DormitoryId,
 	})
 	if err != nil {
@@ -44,6 +55,14 @@ func (s *AuthService) Register(
 	}
 
 	result := new(rmodel.RegisterResponse).From(resp)
+
+	accessToken, refreshToken, err := s.generateJWTTokens(ctx, result.UserId, result.DormitoryId)
+	if err != nil {
+		return nil, fmt.Errorf("%w: error register user: %v", s.handleDBError(err), err)
+	}
+
+	result.AccessToken = accessToken
+	result.RefreshToken = refreshToken
 
 	return result, nil
 }
@@ -63,7 +82,8 @@ func (s *AuthService) Login(
 		return nil, fmt.Errorf("%w: error getting user while login: %v", s.handleDBError(err), err)
 	}
 
-	if request.Password != resp.Password {
+	err = bcrypt.CompareHashAndPassword([]byte(resp.Password), []byte(request.Password))
+	if err != nil {
 		return nil, fmt.Errorf("%w: incorrect password", ErrUnauthorized)
 	}
 
@@ -72,7 +92,34 @@ func (s *AuthService) Login(
 		DormitoryId: resp.DormitoryId,
 	}
 
+	accessToken, refreshToken, err := s.generateJWTTokens(ctx, result.UserId, result.DormitoryId)
+	if err != nil {
+		return nil, fmt.Errorf("%w: error register user: %v", s.handleDBError(err), err)
+	}
+
+	result.AccessToken = accessToken
+	result.RefreshToken = refreshToken
+
 	return result, nil
+}
+
+func (s *AuthService) RefreshTokens(
+	ctx context.Context,
+	request *rmodel.RefreshTokensRequest,
+) (*rmodel.RefreshTokensResponse, error) {
+	if request == nil {
+		return nil, ErrBadRequest
+	}
+
+	accessToken, refreshToken, err := s.generateJWTTokens(ctx, request.UserId, request.DormitoryId)
+	if err != nil {
+		return nil, fmt.Errorf("%w: error refreshing tokens: %v", ErrInternal, err)
+	}
+
+	return &rmodel.RefreshTokensResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func (s *AuthService) handleDBError(err error) error {

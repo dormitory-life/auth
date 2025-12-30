@@ -7,4 +7,5 @@ var (
 	ErrConflict            = errors.New("conflict")
 	ErrInternalServerError = errors.New("internal server error")
 	ErrNotFound            = errors.New("not found")
+	ErrUnauthorized        = errors.New("unauthorized")
 )
