@@ -37,7 +37,7 @@ func (s *Server) setupRouter() *http.ServeMux {
 	mux.HandleFunc("POST /auth/register", s.registerHandler)
 	mux.HandleFunc("POST /auth/login", s.loginHandler)
 	mux.HandleFunc("POST /auth/refresh", s.refreshHandler)
-
+	s.server.Handler = s.loggingMiddleware(mux)
 	return mux
 }
 

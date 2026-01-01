@@ -22,10 +22,11 @@ func (s *AuthService) generateJWTTokens(
 	})
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userId,
-		"exp":     time.Now().Add(7 * 24 * time.Hour).Unix(),
-		"iat":     time.Now().Unix(),
-		"type":    "refresh",
+		"user_id":      userId,
+		"dormitory_id": dormitoryId,
+		"exp":          time.Now().Add(7 * 24 * time.Hour).Unix(),
+		"iat":          time.Now().Unix(),
+		"type":         "refresh",
 	})
 
 	accessTokenString, err := accessToken.SignedString([]byte(s.jwtSecret))

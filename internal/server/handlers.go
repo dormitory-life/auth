@@ -31,7 +31,7 @@ func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.logger.Debug("request", slog.Any("req", req))
+	s.logger.Debug(handlerName, slog.Any("req", req))
 
 	resp, err := s.authService.Register(r.Context(), &req)
 	if err != nil {
@@ -67,7 +67,7 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.logger.Debug("request", slog.Any("req", req))
+	s.logger.Debug(handlerName, slog.Any("req", req))
 
 	resp, err := s.authService.Login(r.Context(), &req)
 	if err != nil {
@@ -119,7 +119,7 @@ func (s *Server) refreshHandler(w http.ResponseWriter, r *http.Request) {
 	req.UserId = userId
 	req.DormitoryId = dormitoryId
 
-	s.logger.Debug("request", slog.Any("req", req))
+	s.logger.Debug(handlerName, slog.Any("req", req))
 
 	resp, err := s.authService.RefreshTokens(r.Context(), &req)
 	if err != nil {
