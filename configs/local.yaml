@@ -11,4 +11,7 @@ database:
   migrations_path: ./migrations
 
 server:
-  port: 8080
+  port: 8081
+
+jwt:
+  secret: "secret-string"

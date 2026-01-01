@@ -13,6 +13,7 @@ type Config struct {
 	Env    string         `yaml:"env"`
 	Db     DataBaseConfig `yaml:"database"`
 	Server ServerConfig   `yaml:"server"`
+	JWT    JWTConfig      `yaml:"jwt"`
 }
 
 type DataBaseConfig struct {
@@ -28,6 +29,10 @@ type DataBaseConfig struct {
 
 type ServerConfig struct {
 	Port uint16 `yaml:"port"`
+}
+
+type JWTConfig struct {
+	Secret string `yaml:"secret"`
 }
 
 func ParseConfig(path string) (*Config, error) {

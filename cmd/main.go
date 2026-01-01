@@ -32,13 +32,16 @@ func main() {
 
 	repository := database.New(db)
 
-	authService := auth.New(repository)
+	authService := auth.New(auth.AuthServiceConfig{
+		Repository: repository,
+		JWTSecret:  cfg.JWT.Secret,
+	})
 
 	s := server.New(server.ServerConfig{
 		Config:      cfg.Server,
 		AuthService: authService,
 		Logger:      logger,
 	})
-	
+
 	panic(s.Start())
 }
