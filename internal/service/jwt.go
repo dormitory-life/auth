@@ -11,7 +11,7 @@ import (
 func (s *AuthService) generateJWTTokens(
 	ctx context.Context,
 	userId string,
-	dormitoryId int,
+	dormitoryId string,
 ) (string, string, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":      userId,

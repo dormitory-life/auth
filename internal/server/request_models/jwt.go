@@ -3,7 +3,7 @@ package requestmodels
 type (
 	RefreshTokensRequest struct {
 		UserId       string
-		DormitoryId  int
+		DormitoryId  string
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
 	}
