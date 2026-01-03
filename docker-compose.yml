@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  auth-db:
+  db:
     image: postgres:15
     environment:
       POSTGRES_DB: db
@@ -21,11 +21,11 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      AUTH_DB_URL: "postgres://auth_user:auth_pass@auth-db:5432/auth_db?sslmode=disable"
+      DB_URL: "postgres://user:password@db:5432/db?sslmode=disable"
       MIGRATIONS_PATH: "/app/migrations"
     ports:
       - 8081:8081
     depends_on:
-      auth-db:
+      db:
         condition: service_healthy
     restart: "no"

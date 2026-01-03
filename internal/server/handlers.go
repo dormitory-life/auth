@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
-	"strconv"
 
 	rmodel "github.com/dormitory-life/auth/internal/server/request_models"
 	auth "github.com/dormitory-life/auth/internal/service"
@@ -93,16 +92,10 @@ func (s *Server) refreshHandler(w http.ResponseWriter, r *http.Request) {
 	const handlerName = "refreshHandler"
 
 	userId := r.Header.Get("X-User-ID")
-	dormitoryIdStr := r.Header.Get("X-Dormitory-ID")
+	dormitoryId := r.Header.Get("X-Dormitory-ID")
 
-	if userId == "" || dormitoryIdStr == "" {
+	if userId == "" || dormitoryId == "" {
 		writeErrorResponse(w, constants.ErrBadRequest, http.StatusBadRequest, "Missing user data")
-		return
-	}
-
-	dormitoryId, err := strconv.Atoi(dormitoryIdStr)
-	if err != nil {
-		writeErrorResponse(w, constants.ErrBadRequest, http.StatusBadRequest, "invalid dormitory id")
 		return
 	}
 

@@ -6,7 +6,7 @@ type User struct {
 	UserId      string
 	Email       string
 	Password    string
-	DormitoryId int
+	DormitoryId string
 	CreatedAt   time.Time
 }
 
@@ -14,12 +14,12 @@ type (
 	RegisterRequest struct {
 		Email       string
 		Password    string
-		DormitoryId int
+		DormitoryId string
 	}
 
 	RegisterResponse struct {
 		UserId      string
-		DormitoryId int
+		DormitoryId string
 	}
 )
 
@@ -32,7 +32,7 @@ type (
 		UserId      string
 		Email       string
 		Password    string
-		DormitoryId int
+		DormitoryId string
 		CreatedAt   time.Time
 	}
 )

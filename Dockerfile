@@ -19,6 +19,6 @@ COPY --from=builder /app/migrations ./migrations
 
 COPY --from=builder /app/configs ./configs
 
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["./auth-service", "/app/configs/config.yaml"]
