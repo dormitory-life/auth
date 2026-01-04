@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/dormitory-life/auth/proto";
+
+service AuthProtoService {
+  // Проверка прав
+  rpc CheckAccess (CheckAccessRequest) returns (CheckAccessResponse);
+}
+
+// Запрос на проверку прав
+message CheckAccessRequest {
+  string user_id = 1;
+  string dormitory_id = 2;
+  bool role_required = 3;
+}
+
+// Ответ для проверок доступа
+message CheckAccessResponse {
+  bool allowed = 1;
+  string reason = 2;        // Причина если not allowed
+  string user_role = 3;     // Роль пользователя в системе
+}

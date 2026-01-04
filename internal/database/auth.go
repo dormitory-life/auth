@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -72,72 +71,5 @@ func (c *Database) register(
 	return &dbtypes.RegisterResponse{
 		UserId:      uid,
 		DormitoryId: request.DormitoryId,
-	}, nil
-}
-
-func (c *Database) GetUserByEmail(
-	ctx context.Context,
-	request *dbtypes.GetUserByEmailRequest,
-) (*dbtypes.GetUserResponse, error) {
-	if request == nil {
-		return nil, dberrors.ErrBadRequest
-	}
-
-	resp, err := c.getUserByEmail(ctx, c.db, request)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c *Database) getUserByEmail(
-	ctx context.Context,
-	driver Driver,
-	request *dbtypes.GetUserByEmailRequest,
-) (*dbtypes.GetUserResponse, error) {
-	if request == nil {
-		return nil, dberrors.ErrBadRequest
-	}
-
-	var (
-		psql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
-
-		usersTable = fmt.Sprintf("%s.%s", constants.SchemaName, constants.UsersTableName)
-	)
-
-	queryBuilder := psql.
-		Select("id", "email", "password", "dormitory_id", "created_at").
-		From(usersTable).
-		Where(squirrel.Eq{"email": request.Email}).
-		Limit(1)
-
-	query, args, err := queryBuilder.ToSql()
-	if err != nil {
-		return nil, fmt.Errorf("%w: error building get user query: %v", dberrors.ErrInternal, err)
-	}
-
-	var user dbtypes.User
-	err = driver.QueryRowContext(ctx, query, args...).Scan(
-		&user.UserId,
-		&user.Email,
-		&user.Password,
-		&user.DormitoryId,
-		&user.CreatedAt,
-	)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: user not found", dberrors.ErrNotFound)
-		}
-
-		return nil, fmt.Errorf("%w: error executing get user query: %v", dberrors.ErrInternal, err)
-	}
-
-	return &dbtypes.GetUserResponse{
-		UserId:      user.UserId,
-		Email:       user.Email,
-		Password:    user.Password,
-		DormitoryId: user.DormitoryId,
-		CreatedAt:   user.CreatedAt,
 	}, nil
 }

@@ -38,6 +38,7 @@ type Repository interface {
 	Register(ctx context.Context, request *dbtypes.RegisterRequest) (*dbtypes.RegisterResponse, error)
 
 	GetUserByEmail(ctx context.Context, request *dbtypes.GetUserByEmailRequest) (*dbtypes.GetUserResponse, error)
+	GetUserById(ctx context.Context, request *dbtypes.GetUserInfoByIdRequest) (*dbtypes.GetUserInfoByIdResponse, error)
 }
 
 func New(db *sql.DB) Repository {

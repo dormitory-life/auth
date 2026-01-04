@@ -26,6 +26,8 @@ type AuthServiceClient interface {
 	Register(ctx context.Context, request *rmodel.RegisterRequest) (*rmodel.RegisterResponse, error)
 	Login(ctx context.Context, request *rmodel.LoginRequest) (*rmodel.LoginResponse, error)
 	RefreshTokens(ctx context.Context, request *rmodel.RefreshTokensRequest) (*rmodel.RefreshTokensResponse, error)
+
+	GetUserInfoById(ctx context.Context, request *rmodel.GetUserByIdRequest) (*rmodel.GetUserByIdResponse, error)
 }
 
 func New(cfg AuthServiceConfig) AuthServiceClient {

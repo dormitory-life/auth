@@ -10,10 +10,11 @@ import (
 const dbConnectionStringTemplate = "%s://%s:%s@%s:%d/%s?sslmode=%s"
 
 type Config struct {
-	Env    string         `yaml:"env"`
-	Db     DataBaseConfig `yaml:"database"`
-	Server ServerConfig   `yaml:"server"`
-	JWT    JWTConfig      `yaml:"jwt"`
+	Env        string           `yaml:"env"`
+	Db         DataBaseConfig   `yaml:"database"`
+	Server     ServerConfig     `yaml:"server"`
+	JWT        JWTConfig        `yaml:"jwt"`
+	GRPCServer GRPCServerConfig `yaml:"grpc_server"`
 }
 
 type DataBaseConfig struct {
@@ -33,6 +34,10 @@ type ServerConfig struct {
 
 type JWTConfig struct {
 	Secret string `yaml:"secret"`
+}
+
+type GRPCServerConfig struct {
+	Port string `yaml:"port"`
 }
 
 func ParseConfig(path string) (*Config, error) {
