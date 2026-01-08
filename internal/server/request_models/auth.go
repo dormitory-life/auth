@@ -1,8 +1,19 @@
 package requestmodels
 
 import (
+	"time"
+
 	dbtypes "github.com/dormitory-life/auth/internal/database/types"
 )
+
+type User struct {
+	UserId      string
+	Email       string
+	Password    string
+	DormitoryId string
+	Role        string
+	CreatedAt   time.Time
+}
 
 type (
 	RegisterRequest struct {
@@ -44,7 +55,18 @@ func (*RegisterResponse) From(msg *dbtypes.RegisterResponse) *RegisterResponse {
 	}
 }
 
-type ErrorResponse struct {
-	Error   string   `json:"error"`
-	Details []string `json:"details"`
+type UserInfoById struct {
+	UserId      string
+	DormitoryId string
+	Role        string
 }
+
+type (
+	GetUserByIdRequest struct {
+		UserId string `json:"user_id"`
+	}
+
+	GetUserByIdResponse struct {
+		Info *UserInfoById
+	}
+)

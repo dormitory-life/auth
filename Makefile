@@ -1,4 +1,4 @@
-.PHONY: all local-build local-run db-build db-up db-down start
+.PHONY: all local-build local-run db-build db-up db-down start gen-proto
 
 all: db-build db-up local-build local-start
 
@@ -13,7 +13,7 @@ run:
 	@cd $(CURDIR) && go run cmd/main.go configs/config.yaml
 
 
-local: local-build local-run
+local: gen-proto local-build local-run
 
 db-build:
 	@echo "DB build"
@@ -23,7 +23,7 @@ db-up:
 	@echo "DB up"
 	@cd $(CURDIR) && docker compose up db -d
 
-local-build:
+local-build: gen-proto
 	@echo "Building auth svc..."
 	@cd $(CURDIR) && go build -o .bin/main cmd/main.go
 
@@ -34,3 +34,8 @@ local-run:
 db-down:
 	@echo "DB down"
 	@cd $(CURDIR) && docker compose down -v
+
+gen-proto:
+	@protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+	  proto/auth.proto

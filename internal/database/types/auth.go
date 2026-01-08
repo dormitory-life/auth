@@ -7,6 +7,7 @@ type User struct {
 	Email       string
 	Password    string
 	DormitoryId string
+	Role        string
 	CreatedAt   time.Time
 }
 
@@ -33,6 +34,19 @@ type (
 		Email       string
 		Password    string
 		DormitoryId string
+		Role        string
 		CreatedAt   time.Time
+	}
+)
+
+type (
+	GetUserInfoByIdRequest struct {
+		Id string
+	}
+
+	GetUserInfoByIdResponse struct {
+		UserId      string
+		DormitoryId string
+		Role        string
 	}
 )
