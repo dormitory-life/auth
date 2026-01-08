@@ -128,15 +128,16 @@ func (s *GRPCServer) CheckAccess(
 		}, err
 	}
 
-	result, err := checkFieldsEquality(req, res)
+	result, err := s.checkFieldsEquality(req, res)
 
 	return result, err
 }
 
-func checkFieldsEquality(
+func (s *GRPCServer) checkFieldsEquality(
 	req *pb.CheckAccessRequest,
 	resp *rmodel.GetUserByIdResponse,
 ) (*pb.CheckAccessResponse, error) {
+	s.logger.Debug("Checking equality: dormitory ids compare", slog.String("requested", req.DormitoryId), slog.String("target", resp.Info.DormitoryId))
 	if req.DormitoryId != resp.Info.DormitoryId {
 		return &pb.CheckAccessResponse{
 			Allowed:  false,
