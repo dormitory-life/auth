@@ -7,6 +7,8 @@ import (
 
 	"github.com/dormitory-life/auth/internal/config"
 	auth "github.com/dormitory-life/auth/internal/service"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type ServerConfig struct {
@@ -37,6 +39,9 @@ func (s *Server) setupRouter() *http.ServeMux {
 	mux.HandleFunc("POST /auth/register", s.registerHandler)
 	mux.HandleFunc("POST /auth/login", s.loginHandler)
 	mux.HandleFunc("POST /auth/refresh", s.refreshHandler)
+
+	mux.Handle("GET /swagger/", httpSwagger.WrapHandler)
+
 	s.server.Handler = s.loggingMiddleware(mux)
 	return mux
 }

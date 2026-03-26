@@ -1,0 +1,188 @@
+basePath: /
+definitions:
+  github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse:
+    properties:
+      details:
+        items:
+          type: string
+        type: array
+      error:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      dormitory_id:
+        type: string
+      refresh_token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.RefreshTokensRequest:
+    properties:
+      access_token:
+        type: string
+      dormitoryId:
+        type: string
+      refresh_token:
+        type: string
+      userId:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.RefreshTokensResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.RegisterRequest:
+    properties:
+      dormitory_id:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  github_com_dormitory-life_auth_internal_server_request_models.RegisterResponse:
+    properties:
+      access_token:
+        type: string
+      dormitory_id:
+        type: string
+      refresh_token:
+        type: string
+      user_id:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API сервиса авторизации Dormitory Life
+  title: Dormitory Life Auth API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Залогинивает пользователя и выдает токены
+      parameters:
+      - description: Данные пользователя для входа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь авторизован
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.LoginResponse'
+        "400":
+          description: Неверные данные / параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+        "401":
+          description: Неверные данные для входа
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+      summary: Вход в систему
+      tags:
+      - auth
+  /auth/ping:
+    get:
+      description: Возвращает pong, если сервис авторизации работает
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Проверка доступности auth-сервиса
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Выдает пользователю пару новых токенов
+      parameters:
+      - description: Пара старых токенов
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.RefreshTokensRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Новые токены выданы
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.RefreshTokensResponse'
+        "400":
+          description: Неверные данные / параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+      summary: Обновление токенов
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя в системе
+      parameters:
+      - description: Данные пользователя для регистрации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь зарегистрирован
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.RegisterResponse'
+        "400":
+          description: Неверные данные / параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+        "409":
+          description: Пользователь с такими данными уже существует
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_dormitory-life_auth_internal_server_request_models.ErrorResponse'
+      summary: Регистрация нового пользователя
+      tags:
+      - auth
+schemes:
+- http
+- https
+swagger: "2.0"

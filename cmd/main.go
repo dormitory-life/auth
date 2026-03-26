@@ -13,7 +13,15 @@ import (
 	"github.com/dormitory-life/auth/internal/logger"
 	"github.com/dormitory-life/auth/internal/server"
 	auth "github.com/dormitory-life/auth/internal/service"
+
+	_ "github.com/dormitory-life/auth/docs"
 )
+
+// @title Dormitory Life Auth API
+// @version 1.0
+// @description API сервиса авторизации Dormitory Life
+// @BasePath /
+// @schemes http https
 
 func main() {
 	configPath := os.Args[1]

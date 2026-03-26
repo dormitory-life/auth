@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: "postgres://user:password@db:5432/db?sslmode=disable"
+      MIGRATIONS_PATH: "/app/migrations"
+    ports:
+      - 8081:8081
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    restart: "no"
+    networks:
+      - auth-db
+      - auth-core
+      - auth-gateway
+
+networks:
+  auth-db:
+    external: true
+  auth-core:
+    external: true
+  auth-gateway:
+    external: true
