@@ -9,6 +9,7 @@ start: build run
 
 build: gen-proto
 	@echo "Building auth svc..."
+	@mkdir -p .bin
 	@cd $(CURDIR) && go build -o .bin/main cmd/main.go
 
 run:
