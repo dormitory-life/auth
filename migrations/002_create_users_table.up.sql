@@ -17,10 +17,25 @@ INSERT INTO
         dormitory_id
     )
 VALUES (
-        'eeefdd1a-d422-480a-bbc8-e665e56dd76f',
-        'test1@mail.ru',
+        '4305c64b-fb4c-435b-968c-74cb49018702',
+        'test9@mail.ru',
         '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
         '9'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    users (
+        id,
+        email,
+        password,
+        dormitory_id
+    )
+VALUES (
+        '101f1810-5f46-4f06-94db-5b23b5695c2c',
+        'test1@mail.ru',
+        '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
+        '1'
     )
 ON CONFLICT DO NOTHING;
 
@@ -33,10 +48,27 @@ INSERT INTO
         role
     )
 VALUES (
-        '3394a51a-8c0b-4ada-b6c2-a4e297d3aceb',
-        'testAdmin@mail.ru',
+        'c01c19fd-f20f-4dbd-af11-4ba3ff0362b9',
+        'admin9@mail.ru',
         '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
         '9',
+        'admin'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    users (
+        id,
+        email,
+        password,
+        dormitory_id,
+        role
+    )
+VALUES (
+        'dc2e8989-6f7d-4f0d-978c-7ac764758536',
+        'admin1@mail.ru',
+        '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
+        '1',
         'admin'
     )
 ON CONFLICT DO NOTHING;

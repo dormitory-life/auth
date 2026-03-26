@@ -12,10 +12,27 @@ import (
 	"github.com/dormitory-life/auth/internal/constants"
 )
 
+// @Summary Проверка доступности auth-сервиса
+// @Description Возвращает pong, если сервис авторизации работает
+// @Tags auth
+// @Produce json
+// @Success 200 {string} string "pong"
+// @Router /auth/ping [get]
 func (s *Server) pingHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
+// @Summary Регистрация нового пользователя
+// @Description Создает нового пользователя в системе
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body rmodel.RegisterRequest true "Данные пользователя для регистрации"
+// @Success 201 {object} rmodel.RegisterResponse "Пользователь зарегистрирован"
+// @Failure 400 {object} rmodel.ErrorResponse "Неверные данные / параметры запроса"
+// @Failure 409 {object} rmodel.ErrorResponse "Пользователь с такими данными уже существует"
+// @Failure 500 {object} rmodel.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /auth/register [post]
 func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 	const handlerName = "registerHandler"
 
@@ -43,6 +60,9 @@ func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		writeErrorResponse(w, err, http.StatusInternalServerError)
 		s.logger.Error("error encoding response",
@@ -52,6 +72,17 @@ func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// @Summary Вход в систему
+// @Description Залогинивает пользователя и выдает токены
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body rmodel.LoginRequest true "Данные пользователя для входа"
+// @Success 200 {object} rmodel.LoginResponse "Пользователь авторизован"
+// @Failure 400 {object} rmodel.ErrorResponse "Неверные данные / параметры запроса"
+// @Failure 401 {object} rmodel.ErrorResponse "Неверные данные для входа"
+// @Failure 500 {object} rmodel.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /auth/login [post]
 func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 	const handlerName = "loginHandler"
 
@@ -79,6 +110,9 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		writeErrorResponse(w, err, http.StatusInternalServerError)
 		s.logger.Error("error encoding response",
@@ -88,6 +122,16 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// @Summary Обновление токенов
+// @Description Выдает пользователю пару новых токенов
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body rmodel.RefreshTokensRequest true "Пара старых токенов"
+// @Success 200 {object} rmodel.RefreshTokensResponse "Новые токены выданы"
+// @Failure 400 {object} rmodel.ErrorResponse "Неверные данные / параметры запроса"
+// @Failure 500 {object} rmodel.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /auth/refresh [post]
 func (s *Server) refreshHandler(w http.ResponseWriter, r *http.Request) {
 	const handlerName = "refreshHandler"
 
@@ -124,6 +168,9 @@ func (s *Server) refreshHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		writeErrorResponse(w, err, http.StatusInternalServerError)
