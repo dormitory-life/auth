@@ -79,14 +79,13 @@ INSERT INTO
         id,
         email,
         password,
-        dormitory_id,
-        role
+        dormitory_id
     )
 VALUES (
         'dc2e8989-6f7d-4f0d-978c-7ac764758536',
         'test1_2@mail.ru',
         '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
-        '1',
+        '1'
     )
 ON CONFLICT DO NOTHING;
 
@@ -129,14 +128,13 @@ INSERT INTO
         id,
         email,
         password,
-        dormitory_id,
-        role
+        dormitory_id
     )
 VALUES (
         '638df0b7-4ebd-4e5b-a0e2-adc130317af5',
         'test7_2@mail.ru',
         '$2a$10$vVCHf1AuH6xsHCYduS1BYejGCRRjDSK/GzdUgSj9IMYawq4ANP1mq',
-        '7',
+        '7'
     )
 ON CONFLICT DO NOTHING;
 
