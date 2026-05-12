@@ -35,3 +35,18 @@ VALUES (
         'Общежитие для иностранных студентов блочного типа.'
     )
 ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    dormitory (
+        id,
+        name,
+        address,
+        description
+    )
+VALUES (
+        '7',
+        'Общежитие 7',
+        'Москва, 1-й Саратовский проезд, д. 5, к. 2, д. 7, к. 3',
+        'Общежитие для иностранных студентов коридорного типа.'
+    )
+ON CONFLICT DO NOTHING;
